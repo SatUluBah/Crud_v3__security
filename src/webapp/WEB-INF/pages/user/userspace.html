@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User page</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin: 30px 30px;
+        }
+        table, th, td {
+            border: 1px solid midnightblue;
+        }
+        th, td {
+            padding: 10px;
+        }
+        th {
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+<h1>User page</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Username</th>
+        <th>Password</th>
+        <th>Role</th>
+
+    </tr>
+    </thead>
+    <tbody>
+
+
+    <tr>
+        <td th:text="${user.id}">ID</td>
+
+        <td><a th:href="@{/user/{id}(id=${user.getId()})}" th:text="${user.getUsername()}">user></a></td>
+        <td th:text="${user.getPassword()}">password</td>
+        <td>
+            <table>
+                <tr th:each="role: ${user.getRoles()}">
+                    <div th:text="${role.getName()}">role</div>
+            </table>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<br/>
+<br/>
+<form th:method="POST" th:action="@{/logout}">
+        <input class="btn btn-success" type="submit" value="Logout">
+</form>
+</div>
+</body>
+</html>

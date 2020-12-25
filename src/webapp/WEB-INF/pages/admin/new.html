@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New User</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin: 30px 30px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+<form th:method="POST" th:action="@{/admin/new}" th:object="${user}">
+    <label for="login">Username</label>
+    <input type="text" th:field="*{username}" id="login"/>
+    <br/>
+    <br/>
+    <label for="password">Password</label>
+    <input type="text" th:field="*{password}" id="password"/>
+    <br/>
+    <br/>
+
+<div>
+        <select th:object="${r}" th:field="*{id}" >
+            <option value="0">select role</option>
+            <br/>
+            <br/>
+            <option th:each="showRole : ${showRoles}"  th:value="${showRole.id}" th:text="${showRole.getName()}"></option>
+        </select>
+</div>
+
+    <input type="submit" value="Create new user">
+</form>
+<br/>
+<a href="/admin/users">Back</a>
+
+<br/>
+<br/>
+<form th:method="POST" th:action="@{/logout}">
+    <input class="btn btn-success" type="submit" value="Logout"/>
+</form>
+</div>
+</body>
+</html>
