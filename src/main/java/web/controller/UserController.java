@@ -1,5 +1,6 @@
 package web.controller;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import web.model.Role;
 import web.model.User;
 import web.service.RoleService;
@@ -19,13 +20,15 @@ public class UserController {
 
     private final UserService userService;
     private final RoleService roleService;
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Autowired
-    public UserController(UserService userService, RoleService roleService, PasswordEncoder passwordEncoder) {
+    public UserController(UserService userService, RoleService roleService
+//                          PasswordEncoder passwordEncoder
+    ) {
         this.userService = userService;
         this.roleService = roleService;
-        this.passwordEncoder = passwordEncoder;
+//        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -53,10 +56,8 @@ public class UserController {
 
     @GetMapping("/admin/new")
     public String newUser(Model model) {
-        Role r = new Role();
         User user = new User();
         List<Role> showRoles = roleService.listRoles();
-        model.addAttribute("r", r);
         model.addAttribute("user", user);
         model.addAttribute("showRoles", showRoles);
         return "admin/new";
@@ -64,8 +65,6 @@ public class UserController {
 
     @GetMapping("/admin/{id}/edit")
     public String editUser(Model model, @PathVariable("id") long id) {
-        Role r = new Role();
-        model.addAttribute("r", r);
         model.addAttribute("user", userService.getUser(id));
         model.addAttribute("showRoles", roleService.listRoles());
         return "admin/edit";
@@ -84,13 +83,9 @@ public class UserController {
     }
 
     @PostMapping("/admin/new")
-    public String createUser(Model model, @ModelAttribute("user") User user, @ModelAttribute("r") Role role) {
-        Role roleRole = roleService.listRoles().stream().filter(x -> x.getId() == role.getId()).findAny().get();
-        User u = new User();
-        u.setUsername(user.getUsername());
-        u.setPassword(passwordEncoder.encode(user.getPassword()));
-        u.setRole(roleRole);
-        userService.add(u);
+    public String createUser(Model model, @ModelAttribute("user") User user) {
+        user.setPassword(encoder.encode(user.getPassword()));
+        userService.add(user);
         model.addAttribute("users", userService.listUsers());
         return "admin/users";
     }
@@ -113,13 +108,9 @@ public class UserController {
 
 
     @PatchMapping("/admin/users/{id}")
-    public String updateUser(Model model, @ModelAttribute("user") User user, @ModelAttribute("r") Role role, @PathVariable("id") long id) {
-        Role newRole = roleService.listRoles().stream().filter(x -> x.getName().equals(role.getName())).findAny().get();
-        User u = userService.getUser(id);
-        u.setRole(newRole);
-        u.setPassword(passwordEncoder.encode(user.getPassword()));
-        u.setUsername(user.getUsername());
-        userService.updateUser(u);
+    public String updateUser(Model model, @ModelAttribute("user") User user) {
+        user.setPassword(encoder.encode(user.getPassword()));
+        userService.updateUser(user);
         model.addAttribute("users", userService.listUsers());
         return "admin/users";
     }

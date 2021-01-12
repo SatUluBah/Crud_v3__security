@@ -24,11 +24,16 @@
     <br/>
     <br/>
 
-    <div>
-        <select th:object="${r}" th:field="*{name}" >
-            <option value="0">select role</option>
-            <option th:each="showRole : ${showRoles}"  th:value="${showRole.name}" th:text="${showRole.getName()}"></option>
-        </select>
+    <label>Roles:</label>
+    <div th:each="role : ${showRoles}">
+        <div>
+            <input  type="checkbox" name="roles"
+
+                    th:text="${role.name}"
+                    th:value="${role.id}"
+                    th:field="*{roles}"
+            />
+        </div>
     </div>
     <br/>
     <br/>

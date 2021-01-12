@@ -30,8 +30,7 @@
         <th>Username</th>
         <th>Password</th>
         <th>Role</th>
-        <th>Edit</th>
-        <th>Delete</th>
+        <th>Action</th>
     </tr>
     </thead>
     <tbody>
@@ -52,8 +51,7 @@
             <form th:method="GET" th:action="@{/admin/{id}/edit(id=${user.getId()})}">
                 <input type="submit" value="Edit user">
             </form>
-        </td>
-        <td>
+            <br/>
             <form th:method="DELETE" th:action="@{/admin/{id}/delete(id=${user.getId()})}" th:object="${user}">
                 <input type="submit" value="Delete user">
             </form>

@@ -3,15 +3,17 @@ package web.security;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import web.config.handler.SuccessUserHandler;
 
-@Configuration
 @EnableWebSecurity(debug = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -23,9 +25,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.successUserHandler = successUserHandler;
     }
 
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        return daoAuthenticationProvider;
+    }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        auth.authenticationProvider(daoAuthenticationProvider());
 
     }
 
@@ -34,30 +44,46 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .formLogin()
-                .loginPage("/login")
-                .successHandler(successUserHandler)
-                .loginProcessingUrl("/login")
-                .usernameParameter("username")
+                .loginPage("/login")                // указываем страницу с формой логина
+                .successHandler(successUserHandler) //указываем логику обработки при логировании
+                .loginProcessingUrl("/login")       // указываем action с формы логина
+                .usernameParameter("username")      // Указываем параметры логина и пароля с формы логина
                 .passwordParameter("password")
-                .permitAll()
-                .and().csrf().disable();
+                .permitAll()                        // даем доступ к форме логина всем
+                .and().csrf().disable();            //выклчаем кроссдоменную секьюрность (на этапе обучения неважна)
+
         http
                 .logout()
-                .permitAll()
-                .logoutSuccessUrl("/login");
+                .permitAll()                                                  // разрешаем делать логаут всем
+//              .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))   // указываем URL логаута
+                .logoutSuccessUrl("/login");                                  // указываем URL при удачном логауте
+
+
+//        http
+//                .authorizeRequests()
+//                .antMatchers("/login").anonymous()            //страницы аутентификаци доступна всем
+//                .antMatchers("/user/**").hasRole("USER")      // защищенные URL
+//                .antMatchers("/**").hasRole("ADMIN")          // защищенные URL
+//                .anyRequest().authenticated()
+//                .and()
+//                .exceptionHandling().accessDeniedPage("/access-denied");
         http
                 .authorizeRequests()
                 .antMatchers("/login").anonymous()
-                .antMatchers("/user/*").access("hasAnyRole('ROLE_USER')")
-                .antMatchers("/admin/*", "/user/*").access("hasAnyRole('ROLE_ADMIN')")
+                .antMatchers("/user/**").hasAnyRole( "USER")
+                .antMatchers("/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
-                .exceptionHandling().accessDeniedPage("/access-denied");;
+                .exceptionHandling().accessDeniedPage("/access-denied");
     }
 
     @Bean
-    public static NoOpPasswordEncoder passwordEncoder() {
-        return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
+    public static PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
+//    @Bean
+//    public static NoOpPasswordEncoder passwordEncoder() {
+//        return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
+//    }
 
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 
 @Repository
-public class RoleDaoImpl implements RoleDao{
+public class RoleDaoImpl implements RoleDao {
 
     @PersistenceContext
     private EntityManager em;
@@ -20,5 +20,10 @@ public class RoleDaoImpl implements RoleDao{
         Query query = em.createQuery("SELECT role FROM Role role ");
         List<Role> roles = (List<Role>) query.getResultList();
         return roles;
+    }
+    @Override
+    public Role getRole(long id) {
+        return em.find(Role.class, id);
+
     }
 }

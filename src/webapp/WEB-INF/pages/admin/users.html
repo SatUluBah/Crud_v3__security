@@ -24,58 +24,56 @@
 </head>
 <body>
 <div class="container">
-<h1>Users</h1>
-<div>
-    <table>
-        <thead>
-        <tr>
-            <th>Id</th>
-            <th>Username</th>
-            <th>Password</th>
-            <th>Role</th>
-            <th>Edit</th>
-            <th>Delete</th>
-        </tr>
-        </thead>
-        <tbody>
+    <h1>Users</h1>
+    <div>
+        <table>
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Role</th>
+                <th>Action</th>
 
+            </tr>
+            </thead>
+            <tbody>
             <div th:each="user : ${users}">
-        <tr>
-                <td th:text="${user.id}">ID</td>
+                <tr>
+                    <td th:text="${user.id}">ID</td>
 
-                <td><a th:href="@{/admin/{id}(id=${user.getId()})}" th:text="${user.getUsername()}">user></a></td>
-                <td th:text="${user.getPassword()}">password</td>
-                <td>
-                    <table>
-                        <tr th:each="role: ${user.getRoles()}">
-                        <div th:text="${role.getName()}">role</div>
-                    </table>
-                </td>
-                <td>
-                    <form th:method="GET" th:action="@{/admin/{id}/edit(id=${user.getId()})}">
-                        <input type="submit" value="Edit user">
-                    </form>
-                </td>
-                <td>
-                    <form th:method="DELETE" th:action="@{/admin/{id}/delete(id=${user.getId()})}" th:object="${user}">
-                        <input type="submit" value="Delete user">
-                    </form>
-                </td>
+                    <td><a th:href="@{/admin/{id}(id=${user.getId()})}" th:text="${user.getUsername()}">user></a></td>
+                    <td th:text="${user.getPassword()}">password</td>
+                    <td>
+                        <table>
+                            <tr th:each="role: ${user.getRoles()}">
+                                <div th:text="${role.getName()}">role</div>
+                        </table>
+                    </td>
+                    <td>
+                        <form th:method="GET" th:action="@{/admin/{id}/edit(id=${user.getId()})}">
+                            <input type="submit" value="Edit user">
+                        </form>
+                        <br/>
+                        <form th:method="DELETE" th:action="@{/admin/{id}/delete(id=${user.getId()})}" th:object="${user}">
+                            <input type="submit" value="Delete user">
+                        </form>
+                    </td>
+                </tr>
             </div>
-       </tr>
-       </tbody>
-    </table>
+            </tbody>
+        </table>
 
-</div>
-<br/>
+    </div>
+    <br/>
 
-<br/>
-<a href="/admin/new">Create new user</a>
-<br/>
-<br/>
-<form th:method="POST" th:action="@{/logout}">
-    <input class="btn btn-success" type="submit" value="Logout">
-</form>
+    <br/>
+    <a href="/admin/new">Create new user</a>
+    <br/>
+    <br/>
+    <form th:method="POST" th:action="@{/logout}">
+        <input class="btn btn-success" type="submit" value="Logout">
+    </form>
 </div>
 </body>
 </html>

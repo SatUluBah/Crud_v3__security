@@ -25,14 +25,18 @@
     <br/>
     <br/>
 
-<div>
-        <select th:object="${r}" th:field="*{id}" >
-            <option value="0">select role</option>
-            <br/>
-            <br/>
-            <option th:each="showRole : ${showRoles}"  th:value="${showRole.id}" th:text="${showRole.getName()}"></option>
-        </select>
-</div>
+    <label>Roles:</label>
+
+    <div th:each="role : ${showRoles}">
+        <div>
+            <input type="checkbox" name="roles"
+
+                   th:text="${role.name}"
+                   th:value="${role.id}"
+                   th:field="*{roles}"
+            />
+        </div>
+    </div>
 
     <input type="submit" value="Create new user">
 </form>
